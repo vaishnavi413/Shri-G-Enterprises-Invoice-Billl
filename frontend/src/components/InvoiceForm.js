@@ -54,20 +54,22 @@ useEffect(() => {
 
   // --- Fetch latest invoice number from backend ---
   useEffect(() => {
-    const fetchLatestInvoiceNo = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/invoices/latest");
-        const lastNo = res.data?.invoiceNo || 0;
-        setInvoice((prev) => ({
-          ...prev,
-          invoiceNo: (Number(lastNo) + 1).toString(),
-        }));
-      } catch (err) {
-        console.error("Error fetching latest invoice:", err);
-      }
-    };
-    fetchLatestInvoiceNo();
-  }, []);
+  const fetchNextNumber = async () => {
+    try {
+      const response = await axios.get(
+        "https://your-backend-name.onrender.com/api/invoices/next-number"
+      );
+      setInvoice((prev) => ({
+        ...prev,
+        invoiceNumber: response.data.nextNumber,
+      }));
+    } catch (error) {
+      console.error("Error fetching next invoice number:", error);
+    }
+  };
+  fetchNextNumber();
+}, []);
+
 
   // --- Handle changes to invoice items ---
   const handleItemChange = (index, e) => {

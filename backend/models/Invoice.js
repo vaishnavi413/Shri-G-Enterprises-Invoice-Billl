@@ -12,7 +12,7 @@ const itemSchema = new mongoose.Schema({
 // Invoice schema
 const invoiceSchema = new mongoose.Schema(
   {
-    invoiceNo: { type: String, required: true, unique: true }, // match frontend
+    invoiceNo: { type: String, required: true, unique: true }, // String, but numeric value stored as string
     customerName: { type: String, required: true },
     address: String,
     invoiceDate: String,
