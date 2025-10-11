@@ -39,6 +39,11 @@ function InvoiceForm() {
     console.error("Error fetching latest invoice:", err);
   }
 };
+const fetchNextInvoice = async () => {
+  const res = await fetch("https://shri-g-enterprises-invoice-billl.onrender.com/api/invoices/next-number");
+  const data = await res.json();
+  setInvoiceNumber(data.nextNumber); // assuming you have a state for invoice number
+};
 
 
 

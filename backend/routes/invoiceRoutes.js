@@ -33,16 +33,22 @@ router.get("/", async (req, res) => {
 });
 
 // --- Get single invoice by invoice number ---
-router.get("/:invoiceNo", async (req, res) => {
+router.get("/next-number", async (req, res) => {
   try {
-    const invoice = await Invoice.findOne({ invoiceNo: req.params.invoiceNo });
-    if (!invoice) return res.status(404).json({ message: "Invoice not found" });
-    res.json(invoice);
+    const last = await Invoice.findOne().sort({ createdAt: -1 });
+    let nextNumber = 1;
+
+    if (last && last.invoiceNo) {
+      const lastNum = parseInt(last.invoiceNo, 10);
+      nextNumber = isNaN(lastNum) ? 1 : lastNum + 1;
+    }
+
+    res.json({ nextNumber });
   } catch (err) {
-    console.error("❌ Error fetching invoice:", err);
-    res.status(500).json({ message: "Error fetching invoice" });
+    res.status(500).json({ error: err.message });
   }
 });
+
 
 // --- Create new invoice ---
 router.post("/save", async (req, res) => {
