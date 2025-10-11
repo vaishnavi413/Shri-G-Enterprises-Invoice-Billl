@@ -384,19 +384,18 @@ const downloadPDF = async () => {
                         </td>
                       </tr>
                       <tr>
-                        <td>
-                          <strong>Date:</strong>
-                        </td>
-                        <td>
-                          <input
-                            type="date"
-                            value={invoice.invoiceDate}
-                            onChange={(e) =>
-                              setInvoice({ ...invoice, invoiceDate: e.target.value })
-                            }
-                          />
-                        </td>
-                      </tr>
+  <td><strong>Date:</strong></td>
+  <td>
+    <input
+      type="date"
+      value={invoice.invoiceDate}
+      onChange={(e) =>
+        setInvoice({ ...invoice, invoiceDate: e.target.value })
+      }
+      max="2026-03-31"  // <-- restrict to 31 March 2026
+    />
+  </td>
+</tr>
                       <tr>
                         <td>
                           <strong>P.O. No.:</strong>
@@ -412,19 +411,18 @@ const downloadPDF = async () => {
                         </td>
                       </tr>
                       <tr>
-                        <td>
-                          <strong>P.O. Date:</strong>
-                        </td>
-                        <td>
-                          <input
-                            type="date"
-                            value={invoice.poDate}
-                            onChange={(e) =>
-                              setInvoice({ ...invoice, poDate: e.target.value })
-                            }
-                          />
-                        </td>
-                      </tr>
+  <td><strong>P.O. Date:</strong></td>
+  <td>
+    <input
+      type="date"
+      value={invoice.poDate}
+      onChange={(e) =>
+        setInvoice({ ...invoice, poDate: e.target.value })
+      }
+      max="2026-03-31"  // <-- restrict to 31 March 2026
+    />
+  </td>
+</tr>
                     </tbody>
                   </table>
                 </td>
@@ -455,29 +453,29 @@ const downloadPDF = async () => {
 
       {/* ✅ Description as a div instead of textarea for PDF */}
       <td>
-        <div
-          contentEditable
-          suppressContentEditableWarning={true}
-          onInput={(e) =>
-            handleItemChange(index, {
-              target: { name: "description", value: e.currentTarget.textContent },
-            })
-          }
-          style={{
-            width: "100%",
-            minHeight: "40px",
-            fontFamily: "Times New Roman",
-            fontSize: "14px",
-            whiteSpace: "pre-wrap",  // preserves line breaks
-            wordWrap: "break-word",
-            overflowWrap: "break-word",
-            border: "1px solid #ccc", // optional, for editing visibility
-            padding: "2px 4px",
-          }}
-        >
-          {item.description}
-        </div>
-      </td>
+  <div
+    contentEditable
+    suppressContentEditableWarning={true}
+    onInput={(e) =>
+      handleItemChange(index, {
+        target: { name: "description", value: e.currentTarget.textContent },
+      })
+    }
+    style={{
+      width: "100%",
+      minHeight: "40px",
+      fontFamily: "Times New Roman",
+      fontSize: "14px",
+      whiteSpace: "pre-wrap", // preserves line breaks
+      wordWrap: "break-word",
+      overflowWrap: "break-word",
+      outline: "none",   // remove default focus outline
+    }}
+  >
+    {item.description}
+  </div>
+</td>
+
 
       <td>
         <input
