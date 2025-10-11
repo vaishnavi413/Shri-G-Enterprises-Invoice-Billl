@@ -57,7 +57,7 @@ useEffect(() => {
   const fetchNextNumber = async () => {
     try {
       const response = await axios.get(
-        "https://your-backend-name.onrender.com/api/invoices/next-number"
+        "https://shri-g-enterprises-invoice-billl-backend.onrender.com/api/invoices/latest"
       );
       setInvoice((prev) => ({
         ...prev,
