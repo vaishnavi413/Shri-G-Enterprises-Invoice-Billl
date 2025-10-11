@@ -3,103 +3,93 @@ import Invoice from "../models/Invoice.js";
 
 const router = express.Router();
 
-// --- GET next invoice number ---
+// --- Get next invoice number ---
 router.get("/next-number", async (req, res) => {
   try {
-    const last = await Invoice.findOne().sort({ createdAt: -1 });
-    let nextNumber = 1;
+    const lastInvoice = await Invoice.findOne().sort({ invoiceNo: -1 }).exec();
+    let nextInvoiceNo = "0001";
 
-    if (last && last.invoiceNo) {
-      const lastNum = parseInt(last.invoiceNo, 10);
-      nextNumber = isNaN(lastNum) ? 1 : lastNum + 1;
+    if (lastInvoice) {
+      const lastNo = parseInt(lastInvoice.invoiceNo, 10);
+      nextInvoiceNo = String(lastNo + 1).padStart(4, "0");
     }
 
-    res.json({ nextNumber });
+    res.json({ nextInvoiceNo });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error fetching next invoice number:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// --- GET all invoices ---
+// --- Get all invoices ---
 router.get("/", async (req, res) => {
   try {
-    const invoices = await Invoice.find().sort({ createdAt: -1 });
+    const invoices = await Invoice.find().sort({ invoiceNo: -1 });
     res.json(invoices);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error fetching invoices:", err);
+    res.status(500).json({ message: "Error fetching invoices" });
   }
 });
 
-// --- GET single invoice by ID ---
-router.get("/:id", async (req, res) => {
+// --- Get single invoice by invoice number ---
+router.get("/:invoiceNo", async (req, res) => {
   try {
-    const invoice = await Invoice.findById(req.params.id);
+    const invoice = await Invoice.findOne({ invoiceNo: req.params.invoiceNo });
     if (!invoice) return res.status(404).json({ message: "Invoice not found" });
     res.json(invoice);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error fetching invoice:", err);
+    res.status(500).json({ message: "Error fetching invoice" });
   }
 });
 
-// --- CREATE new invoice ---
-router.post("/", async (req, res) => {
+// --- Create new invoice ---
+router.post("/save", async (req, res) => {
   try {
-    const {
-      invoiceNo,
-      customerName,
-      address,
-      invoiceDate,
-      poNo,
-      poDate,
-      items = [],
-      gstRate = 0,
-      notes = [],
-    } = req.body;
+    const invoiceData = req.body;
 
-    // Calculate totals
-    const normalizedItems = items.map((it) => ({
-      description: it.description || "",
-      hsn: it.hsn || "",
-      qty: Number(it.qty) || 0,
-      rate: Number(it.rate) || 0,
-      amount: Number(it.amount) || (Number(it.qty) || 0) * (Number(it.rate) || 0),
+    // Ensure numeric fields
+    invoiceData.items = (invoiceData.items || []).map((item) => ({
+      description: item.description || "",
+      hsn: item.hsn || "",
+      qty: Number(item.qty) || 0,
+      rate: Number(item.rate) || 0,
+      amount:
+        Number(item.amount) ||
+        (Number(item.qty) || 0) * (Number(item.rate) || 0),
     }));
 
-    const total = normalizedItems.reduce((sum, it) => sum + it.amount, 0);
-    const cgst = total * (gstRate / 100);
-    const sgst = total * (gstRate / 100);
-    const grandTotal = total + cgst + sgst;
+    invoiceData.total = Number(invoiceData.total) || 0;
+    invoiceData.cgst = Number(invoiceData.cgst) || 0;
+    invoiceData.sgst = Number(invoiceData.sgst) || 0;
+    invoiceData.grandTotal = Number(invoiceData.grandTotal) || 0;
 
-    // Generate invoice number if not provided
-    let finalInvoiceNo = invoiceNo;
-    if (!finalInvoiceNo) {
-      const last = await Invoice.findOne().sort({ createdAt: -1 });
-      const nextNumber =
-        last && !isNaN(parseInt(last.invoiceNo, 10))
-          ? parseInt(last.invoiceNo, 10) + 1
-          : 1;
-      finalInvoiceNo = nextNumber.toString();
+    // Handle duplicate invoice number
+    if (invoiceData.invoiceNo) {
+      const exists = await Invoice.findOne({ invoiceNo: invoiceData.invoiceNo });
+      if (exists) {
+        const lastInvoice = await Invoice.findOne().sort({ invoiceNo: -1 });
+        invoiceData.invoiceNo = lastInvoice
+          ? String(Number(lastInvoice.invoiceNo) + 1).padStart(4, "0")
+          : "0001";
+      }
+    } else {
+      const lastInvoice = await Invoice.findOne().sort({ invoiceNo: -1 });
+      invoiceData.invoiceNo = lastInvoice
+        ? String(Number(lastInvoice.invoiceNo) + 1).padStart(4, "0")
+        : "0001";
     }
 
-    const newInvoice = new Invoice({
-      invoiceNo: finalInvoiceNo,
-      customerName,
-      address,
-      invoiceDate,
-      poNo,
-      poDate,
-      items: normalizedItems,
-      total,
-      cgst,
-      sgst,
-      grandTotal,
-      notes,
-    });
+    const newInvoice = new Invoice(invoiceData);
+    await newInvoice.save();
 
-    const savedInvoice = await newInvoice.save();
-    res.status(201).json(savedInvoice);
+    res
+      .status(201)
+      .json({ message: "Invoice saved successfully", invoice: newInvoice });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error saving invoice:", err);
+    res.status(500).json({ error: "Failed to save invoice" });
   }
 });
 

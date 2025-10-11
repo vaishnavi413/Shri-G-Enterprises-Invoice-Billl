@@ -34,14 +34,12 @@ function InvoiceForm() {
   try {
     const res = await axios.get("https://shri-g-enterprises-invoice-billl.onrender.com/api/invoices/latest");
     const nextNo = res.data.nextInvoiceNo || "0001";
-    setInvoice(prev => ({ ...prev, invoiceNo: nextNo }));
+    setInvoice(prev => ({ ...prev, invoiceNo: res.data.nextInvoiceNo }));
   } catch (err) {
     console.error("Error fetching latest invoice:", err);
   }
 };
-useEffect(() => {
-  fetchLatestInvoiceNo();
-}, []);
+
 
 
 
@@ -61,7 +59,7 @@ useEffect(() => {
       );
       setInvoice((prev) => ({
         ...prev,
-        invoiceNumber: response.data.nextNumber,
+        invoiceNo: response.data.nextNo,
       }));
     } catch (error) {
       console.error("Error fetching next invoice number:", error);
