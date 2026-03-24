@@ -1,7 +1,6 @@
 // src/App.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import InvoiceForm from "./components/InvoiceForm";
-import InvoiceView from "./pages/InvoiceView";
 import PreviousInvoicePage from "./components/PreviousInvoicePage";
 
 function App() {
@@ -9,8 +8,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<InvoiceForm />} />
-        <Route path="/invoice/:id" element={<InvoiceView />} />
-        <Route path="/previous-invoices/all" element={<PreviousInvoicePage />} />
+        <Route path="/previous-invoices/:invoiceNo" element={<PreviousInvoicePage />} />
       </Routes>
     </Router>
   );

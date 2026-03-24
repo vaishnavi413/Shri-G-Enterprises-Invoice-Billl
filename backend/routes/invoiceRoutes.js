@@ -8,8 +8,8 @@ router.get("/next-number", async (req, res) => {
   try {
     const lastInvoice = await Invoice.findOne().sort({ createdAt: -1 });
     const nextNumber = lastInvoice
-      ? String(parseInt(lastInvoice.invoiceNo) + 1)
-      : "1";
+      ? String(parseInt(lastInvoice.invoiceNo) + 1).padStart(4, "0")
+      : "0001";
 
     res.json({ nextInvoiceNo: nextNumber });
   } catch (err) {
@@ -54,8 +54,8 @@ router.post("/save", async (req, res) => {
     const lastInvoice = await Invoice.findOne().sort({ createdAt: -1 });
 
     const nextInvoiceNo = lastInvoice
-      ? String(parseInt(lastInvoice.invoiceNo) + 1)
-      : "1";
+      ? String(parseInt(lastInvoice.invoiceNo) + 1).padStart(4, "0")
+      : "0001";
 
     invoiceData.invoiceNo = nextInvoiceNo;
 
@@ -74,29 +74,4 @@ router.post("/save", async (req, res) => {
   }
 });
 
-
-// --- Get a single invoice by ID ---
-router.get("/:id", async (req, res) => {
-  try {
-    const invoice = await Invoice.findById(req.params.id);
-    if (!invoice) return res.status(404).json({ message: "Invoice not found" });
-    res.json(invoice);
-  } catch (err) {
-    console.error("❌ Error fetching invoice by ID:", err);
-    res.status(500).json({ message: "Error fetching invoice" });
-  }
-});
-
-// --- Delete an invoice ---
-router.delete("/:id", async (req, res) => {
-  try {
-    await Invoice.findByIdAndDelete(req.params.id);
-    res.json({ message: "Invoice deleted successfully" });
-  } catch (err) {
-    console.error("❌ Delete Error:", err);
-    res.status(500).json({ message: "Error deleting invoice" });
-  }
-});
-
 export default router;
-

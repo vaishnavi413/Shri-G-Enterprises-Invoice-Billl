@@ -14,11 +14,7 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
+app.use(cors());
 app.use(express.json());
 
 // -------------------------------
@@ -38,25 +34,6 @@ mongoose
 // Default route
 app.get("/", (req, res) => {
   res.send("Server is running successfully ✅");
-});
-
-// 🆕 EXPLICIT DELETE ROUTE FIX (Moved BEFORE Router)
-app.delete("/api/invoices/:id", async (req, res) => {
-  const { id } = req.params;
-  console.log(`🗑️ DELETE REQUEST RECEIVED FOR: ${id}`);
-  
-  try {
-    const deleted = await mongoose.model("Invoice").findByIdAndDelete(id);
-    if (!deleted) {
-      console.log(`❌ NOT FOUND: ${id}`);
-      return res.status(404).json({ message: "Invoice not found in Database" });
-    }
-    console.log(`✅ DELETED: ${deleted.invoiceNo}`);
-    res.status(200).json({ message: "Delete Success" });
-  } catch (err) {
-    console.error("❌ DELETE ERROR:", err);
-    res.status(500).json({ message: "Server Error during delete" });
-  }
 });
 
 // Invoice routes
