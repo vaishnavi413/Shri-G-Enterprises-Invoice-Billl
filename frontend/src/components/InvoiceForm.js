@@ -246,9 +246,9 @@ function InvoiceForm() {
            </div>
            <div className="info-box" style={{ border: "1px solid #e0e0e0", padding: "5px", borderRadius: "4px" }}>
              <span style={{ fontSize: "11px", color: "#888", fontWeight: "bold" }}>P.O. No & Date:</span>
-             <div style={{ display: "flex", gap: "2px", marginTop: "2px" }}>
-               <input type="text" placeholder="P.O. No" value={invoice.poNo} onChange={(e) => setInvoice({...invoice, poNo: e.target.value})} style={{ border: "none", borderBottom: "1px solid #eee", fontSize: "12px", width: "60px" }} />
-               <input type="date" value={invoice.poDate} max="2027-03-31" onChange={(e) => setInvoice({...invoice, poDate: e.target.value})} style={{ border: "none", fontSize: "12px", width: "100px" }} />
+             <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "2px" }}>
+               <textarea placeholder="Enter P.O. Number (up to 100+ chars)" value={invoice.poNo} rows="2" onChange={(e) => setInvoice({...invoice, poNo: e.target.value})} style={{ border: "none", borderBottom: "1px solid #eee", fontSize: "12px", width: "100%", outline: "none", resize: "vertical", fontFamily: "inherit", minHeight: "30px" }} />
+               <input type="date" value={invoice.poDate} max="2027-03-31" onChange={(e) => setInvoice({...invoice, poDate: e.target.value})} style={{ border: "none", fontSize: "12px", width: "100%", outline: "none", color: "#444" }} />
              </div>
            </div>
         </div>
