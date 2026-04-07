@@ -233,7 +233,7 @@ function InvoiceForm() {
           <div className="original-recipient" style={{ position: "absolute", top: "40px", right: "40px", fontSize: "9px", color: "#999", textTransform: "uppercase" }}>Original for Recipient</div>
         </div>
 
-        <div className="invoice-boxes" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "5px" }}>
+        <div className="invoice-boxes" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2.5fr", gap: "10px", marginBottom: "5px", alignItems: "start" }}>
            <div className="info-box" style={{ border: "1px solid #e0e0e0", padding: "5px", borderRadius: "4px" }}>
              <span style={{ fontSize: "11px", color: "#888", fontWeight: "bold" }}>Invoice :</span>
              <div style={{ display: "flex", gap: "5px", marginTop: "2px" }}>
@@ -244,12 +244,15 @@ function InvoiceForm() {
              <span style={{ fontSize: "11px", color: "#888", fontWeight: "bold" }}>Invoice Date:</span>
              <input type="date" value={invoice.invoiceDate} max="2027-03-31" onChange={(e) => setInvoice({...invoice, invoiceDate: e.target.value})} style={{ border: "none", display: "block", marginTop: "2px", fontSize: "13px", fontWeight: "bold", width: "100%" }} />
            </div>
-           <div className="info-box" style={{ border: "1px solid #e0e0e0", padding: "5px", borderRadius: "4px" }}>
-             <span style={{ fontSize: "11px", color: "#888", fontWeight: "bold" }}>P.O. No & Date:</span>
-             <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "2px" }}>
-               <textarea placeholder="Enter P.O. Number (up to 100+ chars)" value={invoice.poNo} rows="2" onChange={(e) => setInvoice({...invoice, poNo: e.target.value})} style={{ border: "none", borderBottom: "1px solid #eee", fontSize: "12px", width: "100%", outline: "none", resize: "vertical", fontFamily: "inherit", minHeight: "30px" }} />
-               <input type="date" value={invoice.poDate} max="2027-03-31" onChange={(e) => setInvoice({...invoice, poDate: e.target.value})} style={{ border: "none", fontSize: "12px", width: "100%", outline: "none", color: "#444" }} />
-             </div>
+           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <div className="info-box" style={{ border: "1px solid #e0e0e0", padding: "5px", borderRadius: "4px" }}>
+                <span style={{ fontSize: "11px", color: "#888", fontWeight: "bold" }}>P.O. Number:</span>
+                <input type="text" placeholder="Enter P.O. Number (100+ chars)" value={invoice.poNo} onChange={(e) => setInvoice({...invoice, poNo: e.target.value})} style={{ border: "none", borderBottom: "1px solid #eee", fontSize: "12px", width: "100%", outline: "none", marginTop: "2px" }} />
+              </div>
+              <div className="info-box" style={{ border: "1px solid #e0e0e0", padding: "5px", borderRadius: "4px", width: "50%", alignSelf: "flex-end" }}>
+                <span style={{ fontSize: "11px", color: "#888", fontWeight: "bold" }}>P.O. Date:</span>
+                <input type="date" value={invoice.poDate} max="2027-03-31" onChange={(e) => setInvoice({...invoice, poDate: e.target.value})} style={{ border: "none", fontSize: "12px", width: "100%", outline: "none", color: "#444", marginTop: "2px" }} />
+              </div>
            </div>
         </div>
 
